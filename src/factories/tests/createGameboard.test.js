@@ -1,0 +1,84 @@
+const createGameboard = require("../createGameboard");
+
+describe("Board with all ships sunk", () => {
+  const testBoard = createGameboard();
+  const mockShip = {
+    length: 2,
+    hits: 0,
+    hit() {
+      this.hits++;
+    },
+    isSunk() {
+      return this.hits === this.length;
+    },
+  };
+
+  // hover a ship over the tiles where the ship is supposed to be placed, the
+  // collides argument is set to false to simulate non collision
+  testBoard.hoverShip(0, mockShip.length, "y", false);
+  // place a ship along the Y axis at position 2
+  testBoard.placeShip(2, mockShip, "y");
+  testBoard.receiveAttack(2);
+  testBoard.receiveAttack(12);
+
+  test("Expect tiles where a ship is to be placed to have the property hoveredOver", () => {
+    expect(testBoard.board[0].hoveredOver).toBeTruthy();
+    expect(testBoard.board[10].hoveredOver).toBeTruthy();
+  });
+
+  test("Expect a small ship to be placed vertically starting at the 3rd column of the board", () => {
+    expect(testBoard.board[2].ship).toMatchObject(mockShip);
+    expect(testBoard.board[12].ship).toMatchObject(mockShip);
+  });
+
+  test("Expect all ships to be sunk", () => {
+    expect(testBoard.allShipsSunk()).toBeTruthy();
+  });
+});
+
+describe("Board with ships remaining", () => {
+  const testBoard = createGameboard();
+  const mockShip = {
+    length: 3,
+    hits: 0,
+    hit() {
+      this.hits++;
+    },
+    isSunk() {
+      return this.hits === this.length;
+    },
+  };
+
+  // place a ship along the X axis at position 0
+  testBoard.placeShip(0, mockShip, "x");
+  testBoard.receiveAttack(0);
+  // hover a ship over the tiles with a ship already placed, the collides
+  // argument is set to true to simulate collision
+  testBoard.hoverShip(0, mockShip.length, "x", true);
+
+  test("Expect board to have 100 tiles", () => {
+    expect(testBoard.board.length).toEqual(100);
+  });
+
+  test("Expect a ship to be placed horizontally at the very start of the board", () => {
+    expect(testBoard.board[0].ship).toMatchObject(mockShip);
+    expect(testBoard.board[1].ship).toMatchObject(mockShip);
+  });
+
+  test("Expect tiles where a ship is already placed to not have the property hoveredOver", () => {
+    expect(testBoard.board[0].hoveredOver).toBeFalsy();
+    expect(testBoard.board[1].hoveredOver).toBeFalsy();
+  });
+
+  test("Expect a shot to hit a tile", () => {
+    expect(testBoard.board[0].isHit).toBeTruthy();
+  });
+
+  test("Expect a shot to hit a ship", () => {
+    expect(mockShip.hits).toEqual(1);
+  });
+
+  test("Expect there to be ships remaining", () => {
+    expect(testBoard.allShipsSunk()).toBeFalsy();
+  });
+});
