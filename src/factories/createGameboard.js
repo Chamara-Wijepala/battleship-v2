@@ -5,7 +5,7 @@ module.exports = function createGameboard() {
   function createBoard() {
     const newBoard = [];
     for (let i = 0; i < 100; i++) {
-      newBoard.push({ id: i, hoveredOver: false });
+      newBoard.push({ id: i });
     }
     return newBoard;
   }
@@ -22,17 +22,6 @@ module.exports = function createGameboard() {
           : (board[startPosition + i * 10].ship = givenShip);
       }
       shipsOnBoard.push(givenShip);
-    },
-
-    hoverShip(startPosition, length, axis, collides) {
-      board.forEach((tile) => (tile.hoveredOver = false));
-      if (!collides) {
-        for (let i = 0; i < length; i++) {
-          axis === "x"
-            ? (board[startPosition + i].hoveredOver = true)
-            : (board[startPosition + i * 10].hoveredOver = true);
-        }
-      }
     },
 
     receiveAttack(position) {
