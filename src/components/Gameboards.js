@@ -38,7 +38,12 @@ export function HumanPlayerBoard({ player, changeGameState }) {
   }
 
   function handleClick() {
-    if (playerShips.length < 1 || collides) return;
+    if (
+      playerShips.length < 1 ||
+      collides ||
+      player.gameBoard.board[startPosition].ship
+    )
+      return;
 
     player.gameBoard.placeShip(startPosition, playerShips[0], axis);
 
