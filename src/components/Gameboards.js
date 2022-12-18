@@ -1,9 +1,9 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import clsx from "clsx";
 
 import { checkCollisions } from "../utils/checkCollisions";
 
-export function HumanPlayerBoard({ player }) {
+export function HumanPlayerBoard({ player, changeGameState }) {
   const [axis, setAxis] = useState("x");
   const [startPosition, setStartPosition] = useState(null);
   const [hoverPositions, setHoverPositions] = useState([]);
@@ -48,6 +48,12 @@ export function HumanPlayerBoard({ player }) {
     });
   }
 
+  // sets game state to middle once player places all their ships
+  // this useEffect depends on the startPosition state as it won't be run otherwise
+  useEffect(() => {
+    if (playerShips.length < 1) changeGameState("middle");
+  }, [startPosition]);
+
   return (
     <div className="relative">
       <button
@@ -69,11 +75,25 @@ export function HumanPlayerBoard({ player }) {
             key={tile.id}
             data-position={tile.id}
             className={clsx(
-              "w-full aspect-square bg-zinc-800 transition-colors duration-300",
+              "w-full aspect-square bg-zinc-800 flex justify-center items-center transition-colors duration-300",
               hoverPositions.includes(tile.id) && !collides && "bg-zinc-700",
               tile.ship && "bg-zinc-600"
             )}
-          />
+          >
+            {tile.isHit && (
+              <div
+                className={clsx(
+                  "w-3/4 aspect-square rounded-full flex justify-center items-center",
+                  !tile.ship && "bg-teal-700",
+                  tile.ship && "bg-red-700"
+                )}
+              >
+                {tile.ship && (
+                  <div className="bg-red-900 w-1/2 aspect-square rounded-full" />
+                )}
+              </div>
+            )}
+          </div>
         ))}
       </div>
 
@@ -84,8 +104,21 @@ export function HumanPlayerBoard({ player }) {
   );
 }
 
-export function ComputerPlayerBoard({ player }) {
-  function handleClick(e) {}
+export function ComputerPlayerBoard({
+  player,
+  currentPlayer,
+  changePlayer,
+  gameState,
+}) {
+  // lets human player attack computer's board
+  function handleClick(e) {
+    if (currentPlayer === "computer" || gameState === "start") return;
+
+    const position = Number(e.target.getAttribute("data-position"));
+    player.gameBoard.receiveAttack(position);
+
+    changePlayer("computer");
+  }
 
   return (
     <div>
@@ -97,8 +130,21 @@ export function ComputerPlayerBoard({ player }) {
           <div
             key={tile.id}
             data-position={tile.id}
-            className="w-full aspect-square bg-zinc-800 transition-colors duration-300 hover:bg-zinc-700"
-          />
+            className="w-full aspect-square flex justify-center items-center bg-zinc-800 transition-colors duration-300 hover:bg-zinc-700"
+          >
+            {tile.isHit && (
+              <div
+                className={clsx(
+                  "bg-teal-700 w-3/4 aspect-square rounded-full flex justify-center items-center",
+                  tile.ship && "bg-red-700"
+                )}
+              >
+                {tile.ship && (
+                  <div className="bg-red-900 w-1/2 aspect-square rounded-full" />
+                )}
+              </div>
+            )}
+          </div>
         ))}
       </div>
 
