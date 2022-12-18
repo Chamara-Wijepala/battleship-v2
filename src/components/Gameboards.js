@@ -88,15 +88,10 @@ export function HumanPlayerBoard({ player, changeGameState }) {
             {tile.isHit && (
               <div
                 className={clsx(
-                  "w-3/4 aspect-square rounded-full flex justify-center items-center",
-                  !tile.ship && "bg-teal-700",
+                  "bg-teal-700 w-3/4 aspect-square rounded-full flex justify-center items-center",
                   tile.ship && "bg-red-700"
                 )}
-              >
-                {tile.ship && (
-                  <div className="bg-red-900 w-1/2 aspect-square rounded-full" />
-                )}
-              </div>
+              />
             )}
           </div>
         ))}
@@ -143,11 +138,7 @@ export function ComputerPlayerBoard({
                   "bg-teal-700 w-3/4 aspect-square rounded-full flex justify-center items-center",
                   tile.ship && "bg-red-700"
                 )}
-              >
-                {tile.ship && (
-                  <div className="bg-red-900 w-1/2 aspect-square rounded-full" />
-                )}
-              </div>
+              />
             )}
           </div>
         ))}
