@@ -1,6 +1,9 @@
 import { useEffect, useState } from "react";
+import _ from "underscore";
 import { ComputerPlayerBoard, HumanPlayerBoard } from "./components/Gameboards";
 import createPlayer from "./factories/createPlayer";
+
+import { checkCollisions } from "./utils/checkCollisions";
 
 const humanPlayer = createPlayer("Human");
 const computerPlayer = createPlayer("Computer");
@@ -12,6 +15,39 @@ export default function App() {
   // end will trigger the ending popup
   const [gameState, setGameState] = useState("start");
   const [currentPlayer, setCurrentPlayer] = useState("human");
+
+  function findLegalShipPosition(ship, axis) {
+    let randomNum = _.random(0, 99);
+
+    // iterates until the chosen position won't cause any collisions
+    while (true) {
+      const collides = checkCollisions(
+        randomNum,
+        ship,
+        computerPlayer.gameBoard,
+        axis
+      );
+
+      if (!collides) break;
+
+      randomNum = _.random(0, 99);
+    }
+
+    return randomNum;
+  }
+
+  // places computer's ship on the board at start
+  useEffect(() => {
+    const computerShips = Object.values(computerPlayer.ships);
+
+    computerShips.forEach((ship) => {
+      // chooses either x or y as the axis
+      const axis = ["x", "y"][Math.round(Math.random())];
+
+      const startPosition = findLegalShipPosition(ship, axis);
+      computerPlayer.gameBoard.placeShip(startPosition, ship, axis);
+    });
+  }, []);
 
   // main game loop
   useEffect(() => {
