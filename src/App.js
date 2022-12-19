@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import _ from "underscore";
+import EndGame from "./components/EndGame";
 import { ComputerPlayerBoard, HumanPlayerBoard } from "./components/Gameboards";
 import createPlayer from "./factories/createPlayer";
 
@@ -12,7 +13,7 @@ export default function App() {
   // the gameState is used to restrict certain actions from the players
   // start will only allow human player to place all their ships
   // middle will allow players to attack each other
-  // end will trigger the ending popup
+  // playerWins or computerWins will trigger the ending popup
   const [gameState, setGameState] = useState("start");
   const [currentPlayer, setCurrentPlayer] = useState("human");
 
@@ -56,6 +57,9 @@ export default function App() {
     // makes the computer attack the human player
     setTimeout(() => {
       computerPlayer.makeRandomPlay(humanPlayer.gameBoard);
+
+      if (humanPlayer.gameBoard.allShipsSunk()) setGameState("computerWins");
+
       setCurrentPlayer("human");
     }, 500);
   }, [currentPlayer, gameState]);
@@ -66,7 +70,6 @@ export default function App() {
         <div className="container mx-auto grid p-4 lg:p-8 gap-4 lg:grid-cols-2 lg:gap-16">
           <HumanPlayerBoard
             player={humanPlayer}
-            gameState={gameState}
             changeGameState={(s) => setGameState(s)}
           />
 
@@ -75,9 +78,15 @@ export default function App() {
             currentPlayer={currentPlayer}
             changePlayer={(p) => setCurrentPlayer(p)}
             gameState={gameState}
+            changeGameState={(s) => setGameState(s)}
           />
         </div>
       </main>
+
+      {gameState === "playerWins" ||
+        (gameState === "computerWins" && (
+          <EndGame gameWon={gameState === "playerWins" ? true : false} />
+        ))}
     </div>
   );
 }

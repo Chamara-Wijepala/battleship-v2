@@ -109,6 +109,7 @@ export function ComputerPlayerBoard({
   currentPlayer,
   changePlayer,
   gameState,
+  changeGameState,
 }) {
   // lets human player attack computer's board
   function handleClick(e) {
@@ -116,6 +117,8 @@ export function ComputerPlayerBoard({
 
     const position = Number(e.target.getAttribute("data-position"));
     player.gameBoard.receiveAttack(position);
+
+    if (player.gameBoard.allShipsSunk()) changeGameState("humanWins");
 
     changePlayer("computer");
   }
