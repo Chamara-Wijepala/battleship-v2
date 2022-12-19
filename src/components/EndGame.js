@@ -1,4 +1,4 @@
-export default function EndGame({ gameWon }) {
+export default function EndGame({ gameWon = false }) {
   return (
     <div className="fixed inset-0 bg-zinc-900/50 flex justify-center items-center">
       <div className="bg-zinc-800 text-white p-8 rounded-xl mx-8">

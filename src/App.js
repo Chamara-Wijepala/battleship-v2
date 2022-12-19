@@ -52,7 +52,7 @@ export default function App() {
 
   // main game loop
   useEffect(() => {
-    if (currentPlayer === "human" || gameState === "start") return;
+    if (currentPlayer === "human" || gameState !== "middle") return;
 
     // makes the computer attack the human player
     setTimeout(() => {
@@ -83,10 +83,17 @@ export default function App() {
         </div>
       </main>
 
-      {gameState === "playerWins" ||
-        (gameState === "computerWins" && (
-          <EndGame gameWon={gameState === "playerWins" ? true : false} />
-        ))}
+      <EndMessage gameState={gameState} />
     </div>
   );
+}
+
+function EndMessage({ gameState }) {
+  if (gameState === "humanWins") {
+    return <EndGame gameWon />;
+  } else if (gameState === "computerWins") {
+    return <EndGame />;
+  }
+
+  return null;
 }
