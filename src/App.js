@@ -6,7 +6,7 @@ import createPlayer from "./factories/createPlayer";
 
 import { checkCollisions } from "./utils/checkCollisions";
 
-const humanPlayer = createPlayer("Human");
+const humanPlayer = createPlayer("You");
 const computerPlayer = createPlayer("Computer");
 
 export default function App() {
